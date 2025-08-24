@@ -1,33 +1,54 @@
 import { ProjectCard } from "@/components/project-card";
+import { getProjects } from "@/lib/api-calls";
 import { ProjectDto } from "@/types/dtos/project.dto";
-import { FlatList } from "react-native";
+import { useEffect, useState } from "react";
+import { FlatList, Text, View, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Projects(){
-    //todo: add api call
-    const projects: ProjectDto[] = [
-        {
-            _id: "1",
-            name: "Portfolio Website",
-            category: "Web Development",
-            thumbnail: "https://via.placeholder.com/600x300.png?text=Portfolio+Thumbnail",
-        },
-        {
-            _id: "2",
-            name: "Mobile App",
-            category: "React Native",
-            thumbnail: "https://via.placeholder.com/600x300.png?text=App+Thumbnail",
-        },
-    ];
+export default function Projects() {
+    const [state, setState] = useState<{
+        projects: ProjectDto[];
+        error: string;
+        loading: boolean;
+    }>({
+        projects: [],
+        error: "",
+        loading: true,
+    });
+
+    useEffect(() => {
+        (async () => {
+            const response = await getProjects();
+            if ("error" in response) {
+                setState({ projects: [], error: response.error, loading: false });
+            } else {
+                setState({ projects: response, error: "", loading: false });
+            }
+        })();
+    }, []);
+
+    if (state.loading) {
+        return (
+            <SafeAreaView className="screen items-center justify-center">
+                <ActivityIndicator size="large" color="#f4f5f6" />
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView className="screen">
-            <FlatList
-                data={projects}
-                keyExtractor={(item) => item._id}
-                renderItem={({ item }) => <ProjectCard project={item} />}
-                contentContainerStyle={{ padding: 16 }}
-            />
+            {state.error ? (
+                <View className="flex-1 items-center justify-center">
+                    <Text className="text-red-500 text-lg">{state.error}</Text>
+                </View>
+            ) : (
+                <FlatList
+                    data={state.projects}
+                    keyExtractor={(item) => item._id}
+                    renderItem={({ item }) => <ProjectCard project={item} />}
+                    contentContainerStyle={{ padding: 16 }}
+                />
+            )}
         </SafeAreaView>
-    )
+    );
 }

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { SafeAreaView, FlatList, Text } from "react-native";
-import { useLocalSearchParams } from "expo-router";
-import Toast from "react-native-toast-message";
-
+import ContactCard from "@/components/contact-card";
+import { deleteContact } from "@/lib/api-calls";
 import { ContactDto } from "@/types/dtos/contact.dto";
-import ContactCard from "@/components/contact-card"
+import { useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
+import { FlatList, SafeAreaView, Text } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function TabsIndex() {
     const { apiData, errorMessage } = useLocalSearchParams();
@@ -22,8 +22,16 @@ export default function TabsIndex() {
 
     const handleDelete = async (id: string) => {
         try {
-            //TODO: Call your API here
-            // await fetch(`https://your-api/contacts/${id}`, { method: "DELETE" });
+            const response = await deleteContact(id)
+
+            if (response.error) {
+                Toast.show({
+                    type: "error",
+                    text1: "Deletion failed",
+                    text2: "Something went wrong while deleting.",
+                });
+                throw response.error;
+            }
 
             setContacts((prev) => prev.filter((c) => c._id !== id));
 
@@ -57,6 +65,6 @@ export default function TabsIndex() {
                 }
             />
             <Toast />
-            </SafeAreaView>
+        </SafeAreaView>
     )
 }

@@ -81,7 +81,7 @@ export default function Splash() {
   });
 
   return (
-    <View className="flex-1 items-center justify-center bg-background px-8">
+    <View className="items-center justify-center screen">
       <LinearGradient
         colors={["#9333ea40", "#c026d340", "#ec489940"]}
         style={{
@@ -129,7 +129,7 @@ export default function Splash() {
       </View>
 
       {/* Percentage */}
-      <Text className="text-muted-foreground text-sm">{progress}%</Text>
+      <Text className="text-foreground text-sm">{progress}%</Text>
 
       {/* Loading spinner */}
       <ActivityIndicator
