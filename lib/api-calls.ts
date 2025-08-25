@@ -27,7 +27,19 @@ export async function getProjects() {
     }
 }
 
-//todo: add project type
-export async function addProject() { }
 
-export async function uploadCV() { }
+export async function addProject(form: FormData): Promise<number> {
+    try {
+        const res = await axiosClient.post('/projects', form, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        })
+        console.log(res)
+
+        return res.status
+    } catch (error:any) {
+        console.log(error.message)
+        throw error;
+    }
+}

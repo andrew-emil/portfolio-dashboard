@@ -9,7 +9,7 @@ import Toast from "react-native-toast-message";
 export default function TabsIndex() {
     const { apiData, errorMessage } = useLocalSearchParams();
     const [contacts, setContacts] = useState<ContactDto[]>(
-        JSON.parse(apiData as string)
+        apiData ? JSON.parse(apiData as string) : []
     );
 
     if (errorMessage) {

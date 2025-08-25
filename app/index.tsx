@@ -11,6 +11,7 @@ import {
   View
 } from "react-native";
 import axiosClient from "../lib/axiosClient";
+import { ContactDto } from "@/types/dtos/contact.dto";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,7 +31,7 @@ export default function Splash() {
 
         setProgress(20);
 
-        const { data } = await axiosClient.get("/contacts", {
+        const { data } = await axiosClient.get<ContactDto[]>("/contacts", {
           onDownloadProgress: (progressEvent) => {
             if (progressEvent.total) {
               const percent = Math.floor(
@@ -129,8 +130,7 @@ export default function Splash() {
       </View>
 
       {/* Percentage */}
-      <Text className="text-foreground text-sm">{progress}%</Text>
-
+      <Text className="text-foreground text-center font-inter-italic text-sm">{progress}%</Text>
       {/* Loading spinner */}
       <ActivityIndicator
         size="large"

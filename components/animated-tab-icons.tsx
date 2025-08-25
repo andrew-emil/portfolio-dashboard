@@ -1,7 +1,7 @@
 import { IconName } from "@/types/icon-name";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useRef } from "react";
-import { Animated, Pressable } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated } from "react-native";
 
 function AnimatedTabIcon({
     focused,
@@ -16,31 +16,22 @@ function AnimatedTabIcon({
 }) {
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
-    const onPressIn = () => {
+    useEffect(() => {
         Animated.spring(scaleAnim, {
-            toValue: 0.9,
-            useNativeDriver: true,
-        }).start();
-    };
-
-    const onPressOut = () => {
-        Animated.spring(scaleAnim, {
-            toValue: 1,
+            toValue: focused ? 1.2 : 1,
             friction: 3,
             useNativeDriver: true,
         }).start();
-    };
+    }, [focused, scaleAnim]);
 
     return (
-        <Pressable onPressIn={onPressIn} onPressOut={onPressOut}>
-            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-                <MaterialCommunityIcons
-                    name={focused ? icon : iconOutline}
-                    size={24}
-                    color={color}
-                />
-            </Animated.View>
-        </Pressable>
+        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <MaterialCommunityIcons
+                name={focused ? icon : iconOutline}
+                size={24}
+                color={color}
+            />
+        </Animated.View>
     );
 }
 

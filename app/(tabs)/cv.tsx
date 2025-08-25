@@ -1,7 +1,9 @@
-import axios from "axios";
+import { GlowButton } from "@/components/glow-button";
+import axiosClient from "@/lib/axiosClient";
 import * as DocumentPicker from "expo-document-picker";
+import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
-import { ActivityIndicator, Animated, Button, Text, View } from "react-native";
+import { ActivityIndicator, Animated, Text, View } from "react-native";
 
 export default function CV() {
     const [uploading, setUploading] = useState(false);
@@ -28,11 +30,9 @@ export default function CV() {
                 type: file.mimeType || "application/pdf",
             } as any);
 
-            console.log(result)
-
             try {
-                await axios.post(
-                    "YOUR_NESTJS_API_URL/upload", // Replace with your endpoint
+                const {data} = await axiosClient.post(
+                    "/uploads",
                     formData,
                     {
                         headers: {
@@ -41,7 +41,7 @@ export default function CV() {
                         onUploadProgress: (progressEvent) => {
                             if (progressEvent.total) {
                                 const percent = Math.round(
-                                    (progressEvent.loaded / progressEvent.total) * 100
+                                    ((progressEvent.loaded / progressEvent.total) * 100) / 2
                                 );
                                 setProgress(percent);
                                 Animated.timing(animatedProgress, {
@@ -53,6 +53,7 @@ export default function CV() {
                         },
                     }
                 );
+                console.log(data)
                 setMessage("CV uploaded successfully!");
             } catch (error) {
                 console.log(error)
@@ -71,24 +72,35 @@ export default function CV() {
     return (
         <View className="flex-1 items-center justify-center bg-background px-4">
             <Text className="text-foreground text-xl mb-6">Upload your CV</Text>
-            <Button title="Choose CV (PDF)" onPress={handleUpload} disabled={uploading} />
+            <GlowButton loading={uploading} disabled={uploading} onPress={handleUpload}>
+                <Text>Choose CV (PDF)</Text>
+            </GlowButton>
+            {/* <Button title="" onPress={handleUpload} disabled={uploading} /> */}
             {uploading && (
                 <View style={{ width: "100%", marginTop: 24 }}>
-                    <View className="w-full h-4 bg-card rounded-full overflow-hidden mb-2">
+                    <View className="w-full h-4 bg-card rounded-full overflow-hidden mb-3">
                         <Animated.View
                             style={{
                                 width: widthInterpolated,
                                 height: "100%",
-                                backgroundColor: "#9333ea",
                             }}
-                        />
+                        >
+                            <LinearGradient
+                                colors={["#9333ea", "#c026d3", "#ec4899"]}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
+                                style={{ flex: 1 }}
+                            />
+                        </Animated.View>
                     </View>
-                    <Text className="text-foreground text-center">{progress}%</Text>
+                    <Text className="text-foreground text-center font-inter-italic text-sm">{progress}%</Text>
                     <ActivityIndicator size="large" color="#9333ea" style={{ marginTop: 16 }} />
                 </View>
             )}
             {message ? (
-                <Text className="text-foreground mt-4">{message}</Text>
+                <Text className="text-green-500 mt-4">{message}</Text>
+            ) : message.startsWith("Upload failed.") ? (
+                <Text className="text-red-500 mt-4">{message}</Text>
             ) : null}
         </View>
     );
