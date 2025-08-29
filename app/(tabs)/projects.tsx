@@ -2,8 +2,9 @@ import { ProjectCard } from "@/components/project-card";
 import { getProjects } from "@/lib/api-calls";
 import { ProjectDto } from "@/types/dtos/project.dto";
 import { useEffect, useState } from "react";
-import { FlatList, Text, View, ActivityIndicator } from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 export default function Projects() {
     const [state, setState] = useState<{
@@ -48,7 +49,9 @@ export default function Projects() {
                     renderItem={({ item }) => <ProjectCard project={item} />}
                     contentContainerStyle={{ padding: 16 }}
                 />
+
             )}
+            <Toast />
         </SafeAreaView>
     );
 }

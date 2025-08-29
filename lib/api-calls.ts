@@ -1,4 +1,5 @@
 import { ContactDto } from "@/types/dtos/contact.dto"
+import { DeleteProjectResponseDto } from "@/types/dtos/delete-project-response.dto"
 import { ProjectDto } from "@/types/dtos/project.dto"
 import axiosClient from "./axiosClient"
 
@@ -28,18 +29,29 @@ export async function getProjects() {
 }
 
 
-export async function addProject(form: FormData): Promise<number> {
+export async function addProject(formData: FormData) {
     try {
-        const res = await axiosClient.post('/projects', form, {
+        const { data } = await axiosClient.post<ProjectDto>(`/projects`, formData, {
             headers: {
-                "Content-Type": "multipart/form-data",
-            }
+                'Content-Type': 'multipart/form-data',
+                Accept: "application/json"
+            },
         })
-        console.log(res)
 
-        return res.status
-    } catch (error:any) {
-        console.log(error.message)
+        return data
+    } catch (error: any) {
+        console.log("AXIOS ERROR:", JSON.stringify(error, null, 2));
         throw error;
+    }
+}
+
+export async function deleteProject(projectId: string) {
+    try {
+        const { data } = await axiosClient.delete<DeleteProjectResponseDto>(`/projects/${projectId}`)
+
+        return { message: data.message }
+    } catch (err) {
+        console.log(err)
+        return { error: "Error while deleting project" }
     }
 }

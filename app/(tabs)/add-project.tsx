@@ -6,7 +6,8 @@ import { Picker } from '@react-native-picker/picker';
 import { launchImageLibraryAsync } from "expo-image-picker";
 import { ScrollView } from "moti";
 import React, { useState } from "react";
-import { Image, KeyboardAvoidingView, Platform, SafeAreaView, Text } from "react-native";
+import { Image, SafeAreaView, Text } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
 
 export default function AddProject() {
@@ -49,33 +50,43 @@ export default function AddProject() {
             formData.append("name", form.name)
             formData.append("description", form.description);
             formData.append("category", form.category);
-            formData.append("technologies", JSON.stringify(form.technologies.split(",").map(t => t.trim())));
+
+            form.technologies.split(",").map(t =>
+                formData.append("technologies", t.trim())
+            );
+
             formData.append("repositoryUrl", form.repositoryUrl);
             formData.append("liveUrl", form.liveUrl);
             if (thumbnail) {
                 formData.append("thumbnail", {
                     uri: thumbnail.uri,
-                    name: thumbnail.name,
-                    type: thumbnail.type,
+                    name: thumbnail.name || "upload.jpg",
+                    type: "image/jpeg",
                 } as any);
             }
 
-            console.log(thumbnail)
+            const project = await addProject(formData)
 
-            const statusCode = await addProject(formData)
-            if (statusCode === 201) {
-                Toast.show({
-                    type: "success",
-                    text1: "Project added",
-                    text2: "Project added successfully!",
-                });
-            }
-        } catch (error) {
-            console.log(error)
+            Toast.show({
+                type: "success",
+                text1: "Project added",
+                text2: `Project ${project.name} was added successfully!`,
+            });
+
+            setForm({
+                name: "",
+                description: "",
+                category: ProjectCategory.WebDevelopment,
+                technologies: "",
+                repositoryUrl: "",
+                liveUrl: "",
+            });
+            setThumbnail(null);
+        } catch (error: any) {
             Toast.show({
                 type: "error",
                 text1: "Failed to add project",
-                text2: "Something went wrong.",
+                text2: `${error.message.toLowerCase() || "Something went wrong."}`,
             });
         } finally {
             setLoading(false);
@@ -84,12 +95,14 @@ export default function AddProject() {
 
     return (
         <SafeAreaView className="screen">
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={{ flex: 1 }}
-                keyboardVerticalOffset={80}
+            <KeyboardAwareScrollView
+                enableOnAndroid
+                extraScrollHeight={50} 
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ flexGrow: 1, padding: 16 }}
             >
-                <ScrollView>
+                <ScrollView
+                >
                     <Text className="font-inter-bold text-primary text-md mb-4 text-center">Add Project</Text>
                     <GlowButton onPress={handlePickImage} disabled={loading} className="mb-3">
                         <Text>{thumbnail ? "Change Thumbnail" : "Pick Thumbnail"}</Text>
@@ -97,13 +110,7 @@ export default function AddProject() {
                     {thumbnail && (
                         <Image
                             source={{ uri: thumbnail.uri }}
-                            style={{
-                                width: 150,
-                                height: 150,
-                                borderRadius: 12,
-                                alignSelf: "center",
-                                marginBottom: 8,
-                            }}
+                            className="h-40 w-40 mb-2 self-center rounded-lg"
                             resizeMode="cover"
                         />
                     )}
@@ -125,23 +132,25 @@ export default function AddProject() {
                     <Picker
                         selectedValue={form.category}
                         onValueChange={value => handleChange("category", value)}
-                        dropdownIconColor="#a855f7" // matches your purple accent
+                        dropdownIconColor="#a855f7" 
                         style={{
                             height: 60,
                             width: '100%',
-                            borderRadius: 10,
+                            minWidth: 0,
+                            borderRadius: 8,
                             borderWidth: 1,
-                            borderColor: '#3f3f46', // zinc-700
+                            borderColor: '#27272a',
                             paddingHorizontal: 12,
+                            paddingVertical: 4,
                             fontSize: 16,
-                            backgroundColor: '#1a1a1a', // dark background like inputs
-                            color: '#f3f4f6', // text-gray-100
+                            backgroundColor: '#1a1a1a',
+                            color: '#f3f4f6',
                             shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 2 },
-                            shadowOpacity: 0.15,
-                            shadowRadius: 3,
+                            shadowOffset: { width: 0, height: 1 },
+                            shadowOpacity: 0.05,
+                            shadowRadius: 1,
                             marginTop: 8,
-                            marginBottom: 12,
+                            marginBottom: 8,
                         }}
                     >
                         {Object.values(ProjectCategory).map(cat => (
@@ -151,7 +160,6 @@ export default function AddProject() {
 
 
                     <InputField
-
                         placeholder="Technologies (comma separated)"
                         value={form.technologies}
                         onChangeText={text => handleChange("technologies", text)} />
@@ -171,7 +179,7 @@ export default function AddProject() {
                     </GlowButton>
                 </ScrollView>
                 <Toast />
-            </KeyboardAvoidingView>
+            </KeyboardAwareScrollView>
         </SafeAreaView>
     )
 }

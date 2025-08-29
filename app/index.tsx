@@ -98,7 +98,7 @@ export default function Splash() {
         }}
       >
         <Image
-          source={require("../assets/images/logo.png")}
+          source={require("../assets/images/splash.png")}
           style={{ width: 120, height: 120 }}
           resizeMode="contain"
         />

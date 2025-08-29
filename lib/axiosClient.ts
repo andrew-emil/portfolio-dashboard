@@ -8,7 +8,6 @@ const axiosClient = axios.create({
     baseURL: `${apiUrl}/api`,
     timeout,
     headers: {
-        "Content-Type": "application/json",
         "x-mobile-app-secret": secretKey
     }
 })
