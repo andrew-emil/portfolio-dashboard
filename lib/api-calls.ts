@@ -55,3 +55,4 @@ export async function deleteProject(projectId: string) {
         return { error: "Error while deleting project" }
     }
 }
+

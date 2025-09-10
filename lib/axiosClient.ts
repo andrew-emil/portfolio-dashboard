@@ -1,8 +1,9 @@
 import axios from "axios"
+import Constants from 'expo-constants'
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL
-const timeout = parseInt(process.env.EXPO_PUBLIC_API_TIMEOUT || "10000", 10)
-const secretKey = process.env.EXPO_PUBLIC_API_SECRET_KEY
+const apiUrl = Constants.expoConfig?.extra?.API_URL
+const timeout = Constants.expoConfig?.extra?.TIMEOUT
+const secretKey = Constants.expoConfig?.extra?.SECRET_KEY
 
 const axiosClient = axios.create({
     baseURL: `${apiUrl}/api`,

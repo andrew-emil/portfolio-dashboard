@@ -1,9 +1,11 @@
 import ContactCard from "@/components/contact-card";
 import { deleteContact } from "@/lib/api-calls";
+import { useContacts } from "@/lib/queries/useContacts";
 import { ContactDto } from "@/types/dtos/contact.dto";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { FlatList, SafeAreaView, Text } from "react-native";
+import { FlatList, RefreshControl, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 export default function TabsIndex() {
@@ -11,13 +13,15 @@ export default function TabsIndex() {
     const [contacts, setContacts] = useState<ContactDto[]>(
         apiData ? JSON.parse(apiData as string) : []
     );
+    const { refetch, isRefetching } = useContacts();
+
 
     if (errorMessage) {
         return (
-            <SafeAreaView className="screen">
-                <Text className="flex text-red-400 font-bold font-inter-bold">Error: {errorMessage}</Text>
+            <SafeAreaView className="screen items-center justify-center">
+                <Text className="flex text-red-500 font-bold font-inter-bold">Error: {errorMessage}</Text>
             </SafeAreaView>
-        )
+        );
     }
 
     const handleDelete = async (id: string) => {
@@ -63,6 +67,10 @@ export default function TabsIndex() {
                         No contacts found.
                     </Text>
                 }
+                refreshControl={
+                    <RefreshControl onRefresh={refetch} tintColor="#9333ea" refreshing={isRefetching} />
+                }
+                contentContainerStyle={{ padding: 16 }}
             />
             <Toast />
         </SafeAreaView>
