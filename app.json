@@ -1,39 +1,41 @@
 {
   "expo": {
-    "name": "portfolio-dashboard",
+    "name": "Portfolio Dashboard",
     "slug": "portfolio-dashboard",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "icon": "./assets/images/icon.png",
+    "scheme": "portfoliodashboard",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#0a0a0a"
       },
+      "edgeToEdgeEnabled": true,
       "package": "com.andrewemil.portfoliodashboard"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
     },
     "extra": {
-      "TIMEOUT": 10000,
+      "router": {},
       "eas": {
         "projectId": "a714d959-c638-4b90-bf21-462859df8325"
-      }
+      },
+      "TIMEOUT": 10000
     }
   }
 }
