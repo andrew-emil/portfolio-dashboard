@@ -34,8 +34,7 @@
       "router": {},
       "eas": {
         "projectId": "a714d959-c638-4b90-bf21-462859df8325"
-      },
-      "TIMEOUT": 10000
+      }
     }
   }
 }
