@@ -16,8 +16,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0a0a0a"
       },
-      "edgeToEdgeEnabled": true,
-      "package": "com.andrewemil.portfoliodashboard"
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "bundler": "metro",
@@ -29,12 +28,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "a714d959-c638-4b90-bf21-462859df8325"
-      }
     }
   }
 }
